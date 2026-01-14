@@ -21,24 +21,7 @@ Terrain diversification is one of the MarsExplorer kye attributes. For each epis
 You can install MarsExplorer environment by using the following command:
 
 ```shell
-$ git clone https://github.com/dimikout3/GeneralExplorationPolicy.git
-$ pip install -e mars-explorer
-```
-
-## Full Installation 
-
-If you want you can proceed with a full isntallation, that includes a pre-configured CONDA environment with the Ray/RLlib and all the dependancies. Thereby, enabling a safe and robust pipelining approach to training your own agent on exploration/coverage missions.
-
-```shell
-$ sh setup.sh
-```
-
-## Dependancies
-
-You can have a better look at the dependencies at:
-
-```shell
-setup/environment.yml
+$ pip3 install git+https://github.com/markub3327/MarsExplorer@main
 ```
 
 # Testing
@@ -46,7 +29,7 @@ setup/environment.yml
 Please run the following command to make sure that everything works as expected:
 
 ```shell
-$ python mars-explorer/tests/test.py
+$ python tests/test.py
 ```
 
 ## Manual Control
@@ -54,49 +37,10 @@ $ python mars-explorer/tests/test.py
 We have included a manual control of the agent, via the corresponding arrow keys. Run the manual control environment via:
 
 ```shell
-$ python mars-explorer/tests/manual.py
+$ python tests/manual.py
 ```
 
-# Execution of Experiments
 
-## Deep Reinforcement Learning Approaches
-
-You can train you own agent by using Ray\RLlib formulation. For a more detailed guidance, have a look at our implementation of a PPO agent in a 21-by-21 terrain:
-
-```shell
-$ python trainners/runner.py
-```
-
-You can also test multiple implemantations with different agent (e.g SAC, DQN-Rainbow, A3C) by batch training:
-
-```shell
-$ python trainners/batch.py
-```
-
-By default all of the results, with the saved agents, will be located at:
-
-```shell
-$ ~/ray_results
-```
-
-## Non-Learning Methodologies
-
-In order to provide a comparison with existing and well-established frontier-based approaches, we have included two different implemantation.
-
-<details>
-  <summary><em>Cost-based</em></summary>
-  <p>The next action is chosen based on the distance from the nearest frontier cell.</p>
-</details>
-<details>
-  <summary><em>Utility-based</em></summary>
-  <p>the dicision-making is governed by a frequently updated information potential field</p>
-</details>
-
-Which can be tested by running the corresponding scripts:
-```shell
-$ python non-learning/frontierCostExploration.py.py
-$ python non-learning/frontierUtilityExploration.py.py
-```
 # Citation
 If you find this useful for your research, please use the following:
 ```
