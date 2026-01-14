@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='mars_explorer',
@@ -11,5 +11,5 @@ setup(
         'pygame>=2.0.0'
     ],
     include_package_data=True,
-    py_modules=[]
+    packages=find_packages(),
 )
