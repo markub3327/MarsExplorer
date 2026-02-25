@@ -78,10 +78,10 @@ class Generator:
             # obstacles are placed on rows and colums and then noise is applied
             w_obstacles = np.linspace(self.margins[1],
                                       self.width-1-self.margins[1],
-                                      self.number_columns,dtype=np.int)
+                                      self.number_columns,dtype=np.int64)
             h_obstacles = np.linspace(self.margins[0],
                                       self.height-1-self.margins[0],
-                                      self.number_rows,dtype=np.int)
+                                      self.number_rows,dtype=np.int64)
 
             hv, wv = np.meshgrid(h_obstacles, w_obstacles)
 

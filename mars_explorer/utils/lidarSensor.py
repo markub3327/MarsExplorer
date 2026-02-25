@@ -23,7 +23,7 @@ class Lidar:
         self.ranges_to_idx(position)
 
 
-    def scan(self, position, map=None, resolution=None, dtype=np.int):
+    def scan(self, position, map=None, resolution=None, dtype=np.int64):
         # position --> (height, width) of sensor position (robots)
         # map --> ground truth, with FULL visibility
 
@@ -88,8 +88,8 @@ class Lidar:
 
         rX = np.linspace(p1[0], p2[:,0], resolution)
         rY = np.linspace(p1[1], p2[:,1], resolution)
-        rX = np.round(rX).astype(np.int)
-        rY = np.round(rY).astype(np.int)
+        rX = np.round(rX).astype(np.int64)
+        rY = np.round(rY).astype(np.int64)
 
         rX = np.clip(rX, 0, self.map.shape[0] - 1)
         rY = np.clip(rY, 0, self.map.shape[1] - 1)
