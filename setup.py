@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='mars_explorer',
-    version='0.0.1',
+    version='1.0.0',
     keywords='exploration, robotics, environment, agent, rl, gymnasium',
-    description='Exploration of unknonw areas using lidar',
+    description='Exploration of unknown areas using lidar',
     install_requires=[
         'gymnasium>=1.2.3',
         'numpy>=1.19.2',
