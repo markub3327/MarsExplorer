@@ -8,7 +8,7 @@ DEFAULT_CONFIG = {
     # ======== TOPOLOGY =======
     #  general configuration for the topology of operational area
     "initial": [0, 0],
-    "size": [84, 84],
+    "size": [81, 81],
     #  configuration regarding the movements of uav
     "movementCost": 0.2,
     # ======== ENVIROMENT =======
@@ -36,14 +36,14 @@ DEFAULT_CONFIG = {
     "lidar_channels": 32,
     # ======== VIEWER =========
     "viewer": {
-        "width": 21 * 30,
-        "height": 21 * 30,
-        "title": "Mars-Explorer-V01",
+        "width": 81 * 3,
+        "height": 81 * 3,
+        "title": "Mars-Explorer-V1",
         "drone_img": os.path.join(_IMG_DIR, "drone.png"),
         "obstacle_img": os.path.join(_IMG_DIR, "block.png"),
         "background_img": os.path.join(_IMG_DIR, "mars.jpg"),
         "light_mask": os.path.join(_IMG_DIR, "light_350_hard.png"),
-        "night_color": (20, 20, 20),
+        "night_color": (0, 0, 0),
         "draw_lidar": True,
         "draw_grid": False,
         "draw_traceline": False,

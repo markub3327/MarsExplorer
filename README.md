@@ -18,28 +18,30 @@ Terrain diversification is one of the MarsExplorer kye attributes. For each epis
 
 ## Quick Start
 
+### Installation
 You can install MarsExplorer environment by using the following command:
 
 ```shell
 pip3 install git+https://github.com/markub3327/MarsExplorer@main
 ```
 
-# Testing
+### Usage
+```python
+import gymnasium
+import mars_explorer
 
-Please run the following command to make sure that everything works as expected:
+env = gym.make('explorer-v1')
 
-```shell
-python tests/test.py
+obs, info = env.reset()
+
+done = False
+while not done:
+    action = env.action_space.sample()
+    obs, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
+
+env.close()
 ```
-
-## Manual Control
-
-We have included a manual control of the agent, via the corresponding arrow keys. Run the manual control environment via:
-
-```shell
-python tests/manual.py
-```
-
 
 # Citation
 If you find this useful for your research, please use the following:
