@@ -1,58 +1,39 @@
-import gymnasium
-import numpy as np
-import time
-import pygame as pg
 import argparse
+
+import gymnasium
 import matplotlib.pyplot as plt
+import numpy as np
+import pygame as pg
 
 from mars_explorer.envs.settings import DEFAULT_CONFIG as conf
-
-def get_conf():
-    conf["size"] = [30, 30]
-    conf["obstacles"] = 20
-    conf["lidar_range"] = 4
-    conf["obstacle_size"] = [1,3]
-
-    conf["viewer"]["night_color"] = (0, 0, 0)
-    conf["viewer"]["draw_lidar"] = True
-
-    # conf["viewer"]["width"] = conf["size"][0]*42
-    # conf["viewer"]["width"] = conf["size"][1]*42
-
-    conf["viewer"]["drone_img"] = "../img/drone.png"
-    conf["viewer"]["obstacle_img"] = "../img/block.png"
-    conf["viewer"]["background_img"] = "../img/mars.jpg"
-    conf["viewer"]["light_mask"] = "../img/light_350_hard.png"
-    return conf
 
 
 def saveRend(rend, time_step):
     plt.rcParams["axes.grid"] = False
-    plt.axis('off')
+    plt.axis("off")
     plt.imshow(rend)
     # plt.savefig(f"{time_step}_env.png", bbox_inches='tight')
-    plt.savefig(f"{time_step}_env.png", bbox_inches='tight', dpi=300)
+    plt.savefig(f"{time_step}_env.png", bbox_inches="tight", dpi=300)
     plt.close()
 
 
 def getArgs():
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
-        '-w', '--warm-up',
-        default=0,
-        type=int,
-        help='Number of warm up games ')
+        "-w", "--warm-up", default=0, type=int, help="Number of warm up games "
+    )
     argparser.add_argument(
-        '-g', '--games',
-        default=10,
-        type=int,
-        help='Games to be played')
+        "-g", "--games", default=10, type=int, help="Games to be played"
+    )
     argparser.add_argument(
-        '-s', '--save',
+        "-s",
+        "--save",
         default=False,
         action="store_true",
-        help='Save each rendered image')
+        help="Save each rendered image",
+    )
     return argparser.parse_args()
+
 
 def event():
     while True:
@@ -71,8 +52,9 @@ def event():
                 if event.key == pg.K_DOWN:
                     return 2
 
+
 def play_game(env):
-    total_reward = .0
+    total_reward = 0.0
     observation = env.reset()
     env.render()
     for time_step in range(1000):
@@ -83,9 +65,11 @@ def play_game(env):
             break
         rendered = env.render()
 
-        if args.save:saveRend(rendered, time_step)
+        if args.save:
+            saveRend(rendered, time_step)
 
     return total_reward
+
 
 def close():
     print(f"\nManual game play finished after {len(rewards)} games")
@@ -94,12 +78,12 @@ def close():
     env.close()
     quit()
 
+
 if __name__ == "__main__":
     pg.init()
     args = getArgs()
-    conf = get_conf()
 
-    env = gymnasium.make('mars_explorer:exploConf-v01', conf=conf)
+    env = gymnasium.make("mars_explorer:exploConf-v1", conf=conf)
 
     rewards = []
     for game in range(args.games + args.warm_up):

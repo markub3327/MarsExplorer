@@ -1,5 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 class Generator:
 
@@ -20,10 +21,10 @@ class Generator:
         self.obstacles = config["obstacles"]
         self.size = config["size"]
 
-        self.map = np.zeros((self.size[0],self.size[1]))
+        self.map = np.zeros((self.size[0], self.size[1]))
 
         self._obstaclesInitialPoistions()
-        if self.number_rows!=None and self.number_columns!=None:
+        if self.number_rows != None and self.number_columns != None:
             self._noiseObstaclesPositions()
             self._randomObstacleSize()
         else:
@@ -31,22 +32,25 @@ class Generator:
         # apply to map
         self.map[self.hv, self.wv] = 1
 
-
     def _randomObstacleSizeCell(self):
         # determine obstacle size (random towards height and width axis)
         for obstacle in range(self.hv.shape[0]):
-            ob_width = np.random.randint(self.obstacle_size[0], self.obstacle_size[1]+1)
-            ob_height = np.random.randint(self.obstacle_size[0], self.obstacle_size[1]+1)
+            ob_width = np.random.randint(
+                self.obstacle_size[0], self.obstacle_size[1] + 1
+            )
+            ob_height = np.random.randint(
+                self.obstacle_size[0], self.obstacle_size[1] + 1
+            )
 
-            h_ind = np.arange(self.hv[obstacle], self.hv[obstacle]+ob_height)
-            w_ind = np.arange(self.wv[obstacle], self.wv[obstacle]+ob_width)
+            h_ind = np.arange(self.hv[obstacle], self.hv[obstacle] + ob_height)
+            w_ind = np.arange(self.wv[obstacle], self.wv[obstacle] + ob_width)
             hv_ind, wv_ind = np.meshgrid(h_ind, w_ind)
             self.hv = np.concatenate((self.hv, hv_ind.reshape(-1)))
             self.wv = np.concatenate((self.wv, wv_ind.reshape(-1)))
 
             # rX = np.clip(rX, 0, map.shape[0] - 1)
-            self.hv = np.clip(self.hv, 0, self.size[0]-1)
-            self.wv = np.clip(self.wv, 0, self.size[1]-1)
+            self.hv = np.clip(self.hv, 0, self.size[0] - 1)
+            self.wv = np.clip(self.wv, 0, self.size[1] - 1)
 
     def _randomObstacleSize(self):
         # determine obstacle size (random towards height and width axis)
@@ -54,55 +58,64 @@ class Generator:
             ob_width = np.random.randint(1, self.obstacle_size[1])
             ob_height = np.random.randint(1, self.obstacle_size[0])
 
-            h_ind = np.arange(self.hv[obstacle], self.hv[obstacle]+ob_height)
-            w_ind = np.arange(self.wv[obstacle], self.wv[obstacle]+ob_width)
+            h_ind = np.arange(self.hv[obstacle], self.hv[obstacle] + ob_height)
+            w_ind = np.arange(self.wv[obstacle], self.wv[obstacle] + ob_width)
             hv_ind, wv_ind = np.meshgrid(h_ind, w_ind)
             self.hv = np.concatenate((self.hv, hv_ind.reshape(-1)))
             self.wv = np.concatenate((self.wv, wv_ind.reshape(-1)))
 
-            self.hv = np.clip(self.hv, 0, self.size[0]-1)
-            self.wv = np.clip(self.wv, 0, self.size[1]-1)
-
+            self.hv = np.clip(self.hv, 0, self.size[0] - 1)
+            self.wv = np.clip(self.wv, 0, self.size[1] - 1)
 
     def _obstaclesInitialPoistions(self):
 
-        if self.number_rows==None and self.number_columns==None:
+        if self.number_rows == None and self.number_columns == None:
             # obstacles are placed randomly in the map
-            w_obstacles = np.random.randint(self.margins[0], self.width-1-self.margins[0], self.obstacles)
-            h_obstacles = np.random.randint(self.margins[1], self.height-1-self.margins[1], self.obstacles)
+            w_obstacles = np.random.randint(
+                self.margins[0], self.width - 1 - self.margins[0], self.obstacles
+            )
+            h_obstacles = np.random.randint(
+                self.margins[1], self.height - 1 - self.margins[1], self.obstacles
+            )
 
             self.hv = h_obstacles
             self.wv = w_obstacles
 
         else:
             # obstacles are placed on rows and colums and then noise is applied
-            w_obstacles = np.linspace(self.margins[1],
-                                      self.width-1-self.margins[1],
-                                      self.number_columns,dtype=np.int64)
-            h_obstacles = np.linspace(self.margins[0],
-                                      self.height-1-self.margins[0],
-                                      self.number_rows,dtype=np.int64)
+            w_obstacles = np.linspace(
+                self.margins[1],
+                self.width - 1 - self.margins[1],
+                self.number_columns,
+                dtype=np.int64,
+            )
+            h_obstacles = np.linspace(
+                self.margins[0],
+                self.height - 1 - self.margins[0],
+                self.number_rows,
+                dtype=np.int64,
+            )
 
             hv, wv = np.meshgrid(h_obstacles, w_obstacles)
 
             self.hv = np.concatenate(hv[:])
             self.wv = np.concatenate(wv[:])
 
-
     def _noiseObstaclesPositions(self):
         # add noise to existing obstacles
         h_top = np.ceil(self.noise[0])
         h_btm = -np.floor(self.noise[0])
-        if h_btm >= h_top:h_top+=1
+        if h_btm >= h_top:
+            h_top += 1
         w_top = np.ceil(self.noise[1])
         w_btm = -np.floor(self.noise[1])
-        if w_btm >= w_top:w_top+=1
+        if w_btm >= w_top:
+            w_top += 1
 
-        self.hv += np.random.randint(h_btm, h_top, size = self.hv.shape[0])
-        np.clip(self.hv, 0, self.height-1, out=self.hv)
-        self.wv += np.random.randint(w_btm, w_top, size = self.wv.shape[0])
-        np.clip(self.wv, 0, self.width-1, out=self.wv)
-
+        self.hv += np.random.randint(h_btm, h_top, size=self.hv.shape[0])
+        np.clip(self.hv, 0, self.height - 1, out=self.hv)
+        self.wv += np.random.randint(w_btm, w_top, size=self.wv.shape[0])
+        np.clip(self.wv, 0, self.width - 1, out=self.wv)
 
     def get_map(self):
         return self.map

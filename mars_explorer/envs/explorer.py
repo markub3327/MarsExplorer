@@ -1,17 +1,17 @@
-import numpy as np
-
-from mars_explorer.utils.randomMapGenerator import Generator
-from mars_explorer.utils.lidarSensor import Lidar
-from mars_explorer.render.viewer import Viewer
-from mars_explorer.envs.settings import DEFAULT_CONFIG
-
 import gymnasium
+import numpy as np
 from gymnasium import error, spaces, utils
 from gymnasium.utils import seeding
 
+from mars_explorer.envs.settings import DEFAULT_CONFIG
+from mars_explorer.render.viewer import Viewer
+from mars_explorer.utils.lidarSensor import Lidar
+from mars_explorer.utils.randomMapGenerator import Generator
+
+
 class Explorer(gymnasium.Env):
-    metadata = {'render.modes': ['rgb_array'],
-                'video.frames_per_second': 6}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 6}
+
     # def __init__(self, conf=None):
     #  check why conf is not compatible will RLlib (it works on standalone gym)
     def __init__(self):
@@ -30,7 +30,9 @@ class Explorer(gymnasium.Env):
         self.SIZE = self.conf["size"]
 
         self.action_space = gymnasium.spaces.Discrete(4)
-        self.observation_space = gymnasium.spaces.Box(0.,1.,(self.sizeX, self.sizeY, 1))
+        self.observation_space = gymnasium.spaces.Box(
+            0.0, 1.0, (self.sizeX, self.sizeY, 1)
+        )
 
         self.viewerActive = False
 
@@ -52,9 +54,11 @@ class Explorer(gymnasium.Env):
 
         # for lidar --> 0 free cell
         #               1 obstacle
-        self.ldr = Lidar(r=self.conf["lidar_range"],
-                         channels=self.conf["lidar_channels"],
-                         map=randomMapOriginal)
+        self.ldr = Lidar(
+            r=self.conf["lidar_range"],
+            channels=self.conf["lidar_channels"],
+            map=randomMapOriginal,
+        )
 
         obstacles_idx = np.where(self.groundTruthMap == 1.0)
         obstacles_x = obstacles_idx[0]
@@ -78,7 +82,7 @@ class Explorer(gymnasium.Env):
         self.outputMap = self.exploredMap.copy()
         self.outputMap[self.x, self.y] = 0.6
 
-        self.new_state = np.reshape(self.outputMap, (self.sizeX, self.sizeY,1))
+        self.new_state = np.reshape(self.outputMap, (self.sizeX, self.sizeY, 1))
         self.reward = 0
         self.done = False
 
@@ -91,13 +95,11 @@ class Explorer(gymnasium.Env):
 
         return self.new_state
 
-
     def action_space_sample(self):
         random = np.random.randint(4)
         return random
 
-
-    def render(self, mode='human'):
+    def render(self, mode="human"):
 
         if not self.viewerActive:
             self.viewer = Viewer(self, self.conf["viewer"])
@@ -106,7 +108,6 @@ class Explorer(gymnasium.Env):
         self.viewer.run()
         # XXX: check why flip axes ... @dkoutras
         return np.swapaxes(self.viewer.get_display_as_array(), 0, 1)
-
 
     def _choice(self, choice):
 
@@ -119,14 +120,13 @@ class Explorer(gymnasium.Env):
         elif choice == 3:
             self._move(x=0, y=-1)
 
-
     def _move(self, x, y):
 
         canditateX = self.x + x
         canditateY = self.y + y
 
-        in_x_axis = canditateX>=0 and canditateX<=(self.sizeX-1)
-        in_y_axis = canditateY>=0 and canditateY<=(self.sizeY-1)
+        in_x_axis = canditateX >= 0 and canditateX <= (self.sizeX - 1)
+        in_y_axis = canditateY >= 0 and canditateY <= (self.sizeY - 1)
         in_obstacles = [canditateX, canditateY] in self.obstacles_idx
 
         if in_x_axis and in_y_axis and not in_obstacles:
@@ -140,17 +140,15 @@ class Explorer(gymnasium.Env):
             # collision with obstacle, punishment (negative reward)
             self.collision = True
 
-
     def _updateMaps(self):
 
         self.pastExploredMap = self.exploredMap.copy()
 
-        lidarX = self.lidarIndexes[:,0]
-        lidarY = self.lidarIndexes[:,1]
+        lidarX = self.lidarIndexes[:, 0]
+        lidarY = self.lidarIndexes[:, 1]
         self.exploredMap[lidarX, lidarY] = self.groundTruthMap[lidarX, lidarY]
 
         self.exploredMap[self.x, self.y] = 0.6
-
 
     def _activateLidar(self):
 
@@ -160,8 +158,7 @@ class Explorer(gymnasium.Env):
 
         self.lidarIndexes = indexes
 
-
-    def _applyRLactions(self,action):
+    def _applyRLactions(self, action):
 
         self._choice(action)
         self._activateLidar()
@@ -169,9 +166,8 @@ class Explorer(gymnasium.Env):
 
         self.outputMap = self.exploredMap.copy()
         self.outputMap[self.x, self.y] = 0.5
-        self.new_state = np.reshape(self.outputMap, (self.sizeX, self.sizeY,1))
+        self.new_state = np.reshape(self.outputMap, (self.sizeX, self.sizeY, 1))
         self.timeStep += 1
-
 
     def _computeReward(self):
 
@@ -181,12 +177,11 @@ class Explorer(gymnasium.Env):
         # TODO: add fixed cost for moving (-0.5 per move)
         self.reward = currentExploredCells - pastExploredCells - self.movementCost
 
-
     def _checkDone(self):
 
         if self.timeStep > self.maxSteps:
             self.done = True
-        elif np.count_nonzero(self.exploredMap) > 0.95*(self.SIZE[0]*self.SIZE[1]):
+        elif np.count_nonzero(self.exploredMap) > 0.95 * (self.SIZE[0] * self.SIZE[1]):
             self.done = True
             self.reward = self.conf["bonus_reward"]
         elif self.collision:
@@ -196,13 +191,11 @@ class Explorer(gymnasium.Env):
             self.done = True
             self.reward = self.conf["out_of_bounds_reward"]
 
-
     def _updateTrajectory(self):
 
         self.state_trajectory.append(self.new_state)
         self.reward_trajectory.append(self.reward)
         self.drone_trajectory.append([self.x, self.y])
-
 
     def step(self, action):
 
@@ -214,7 +207,6 @@ class Explorer(gymnasium.Env):
 
         info = {}
         return self.new_state, self.reward, self.done, info
-
 
     def close(self):
         if self.viewerActive:
