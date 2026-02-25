@@ -21,7 +21,7 @@ Terrain diversification is one of the MarsExplorer kye attributes. For each epis
 You can install MarsExplorer environment by using the following command:
 
 ```shell
-$ pip3 install git+https://github.com/markub3327/MarsExplorer@main
+pip3 install git+https://github.com/markub3327/MarsExplorer@main
 ```
 
 # Testing
@@ -29,7 +29,7 @@ $ pip3 install git+https://github.com/markub3327/MarsExplorer@main
 Please run the following command to make sure that everything works as expected:
 
 ```shell
-$ python tests/test.py
+python tests/test.py
 ```
 
 ## Manual Control
@@ -37,7 +37,7 @@ $ python tests/test.py
 We have included a manual control of the agent, via the corresponding arrow keys. Run the manual control environment via:
 
 ```shell
-$ python tests/manual.py
+python tests/manual.py
 ```
 
 
